@@ -27,9 +27,11 @@ public class Cube : MonoBehaviour {
 	private GameObject ground;
 	private RaycastHit hit;
 	private Ray ray;
+	private Quaternion cubeRot;
 
 	public GameObject launcher;
 	public float velocityMulti = 4f; //Multiplyer for velocity
+	public float rotDecreaseRate = 0.2f;
 
 
 	// Use this for initialization
@@ -41,6 +43,7 @@ public class Cube : MonoBehaviour {
 		//mousePos3D = Vector3.zero;
 		//maxMagnitude = this.gameObject.GetComponent<Collider> ().bounds.size.x * 3f;
 		velocity = Vector3.zero; //The player only controls X and Z velocity
+		cubeRot = this.gameObject.transform.rotation;
 		//cubeBody = this.gameObject.GetComponent<Rigidbody>();
 	}
 	
@@ -59,8 +62,15 @@ public class Cube : MonoBehaviour {
 			}
 			break;
 		case PlayState.Launch:
-			GameObject.Destroy(tempLauncher);
+			GameObject.Destroy (tempLauncher);
 			print ("launched 1" + this.gameObject.GetComponent<Rigidbody> ().velocity.magnitude);
+			if (cubeRot.eulerAngles.y > 0.0f) {
+				cubeRot.eulerAngles -= cubeRot.eulerAngles * rotDecreaseRate;
+				if (cubeRot.eulerAngles.y <= 0.0f) {
+					cubeRot = Quaternion.Euler (0, 0, 0);
+				}
+			}
+			this.gameObject.transform.rotation = cubeRot;
 			if (this.gameObject.GetComponent<Rigidbody> ().velocity.magnitude <= 0.01) {
 				this.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
 				print ("launched 2" + this.gameObject.GetComponent<Rigidbody> ().velocity.magnitude);
@@ -102,8 +112,13 @@ public class Cube : MonoBehaviour {
 		GameObject.Destroy (tempLauncher);
 		//mousePos3D.y = 0f;
 		tempLauncher = (GameObject)Instantiate (launcher, launcherPos, Quaternion.Euler (0, 0, 0));
+		cubeRot.eulerAngles += new Vector3(0,Mathf.Atan2(
+			(this.gameObject.transform.position.z - launcherPos.z ),
+			this.gameObject.transform.position.x) * Mathf.Rad2Deg,0);
+		this.gameObject.transform.rotation = cubeRot;
 		//cubePos = Camera.main.ScreenToWorldPoint (this.gameObject.transform.position);
 		velocity = launcherPos - this.gameObject.transform.position;
+		velocity.y = 0.4f;
 		//do something about the y later
 		//velocity.y = 0f; 
 		//GameObject.Destroy (tempLauncher);

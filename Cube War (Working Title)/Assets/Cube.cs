@@ -9,10 +9,15 @@ using UnityEngine;
 //Enum for the current play state
 /*
 public enum CubeState{
-	Idle, //The player is idle
-	Aiming, //The player has selected a cude and is currently aiming
-	Launch}; //The player has launched the cube, and the cube is in motion
+	idle, //The player is idle
+	aiming, //The player has selected a cude and is currently aiming
+	launch}; //The player has launched the cube, and the cube is in motion
 	*/
+public enum PlayState{
+	idle, //The player is idle
+	aiming, //The player has selected a cude and is currently aiming
+	launch,
+	placing};
 
 public class Cube : MonoBehaviour {
 
@@ -25,7 +30,7 @@ public class Cube : MonoBehaviour {
 	private Vector3 launcherPos;
 	private float launcherY = 0.0f;
 	private Vector3 cubePos;
-	private GameObject tempLauncher;
+	private GameObject templauncher;
 	private GameObject tempHitMarker;
 	private GameObject ground;
 	private RaycastHit hit;
@@ -33,8 +38,8 @@ public class Cube : MonoBehaviour {
 	private Vector3 hitPos;
 	private float maxHitPosY;
 	private float minHitPosY;
-	private float maxLauncherY;
-	private float minLauncherY;
+	private float maxlauncherY;
+	private float minlauncherY;
 
 	public GameObject launcher;
 	public GameObject hitPosMarker;
@@ -59,10 +64,10 @@ public class Cube : MonoBehaviour {
 			
 		StateMachine.playState = playState;
 		switch (playState) {
-		case PlayState.Idle:
+		case PlayState.idle:
 			break;
-		case PlayState.Aiming:
-			UpdateLaunchVelocity ();
+		case PlayState.aiming:
+			UpdatelaunchVelocity ();
 			//alter hit position
 			if(Input.GetKey(KeyCode.Z)){
 				if (hitPos.y < maxHitPosY) {
@@ -71,8 +76,8 @@ public class Cube : MonoBehaviour {
 					if (hitPos.y > maxHitPosY) {
 						hitPos.y = maxHitPosY;
 					}
-					if (hitPos.y > maxLauncherY) {
-						launcherY = maxLauncherY;
+					if (hitPos.y > maxlauncherY) {
+						launcherY = maxlauncherY;
 					}
 					tempHitMarker.transform.position = hitPos;
 				}
@@ -84,8 +89,8 @@ public class Cube : MonoBehaviour {
 					if (hitPos.y < minHitPosY) {
 						hitPos.y = minHitPosY;
 					}
-					if (hitPos.y < minLauncherY) {
-						launcherY = minLauncherY;
+					if (hitPos.y < minlauncherY) {
+						launcherY = minlauncherY;
 					}
 					tempHitMarker.transform.position = hitPos;
 				}
@@ -93,18 +98,18 @@ public class Cube : MonoBehaviour {
 
 			//alter launcher pos
 			if(Input.GetKey(KeyCode.C)){
-				if (launcherY < maxLauncherY) {
+				if (launcherY < maxlauncherY) {
 					launcherY += hitPosMod;
-					if (hitPos.y > maxLauncherY) {
-						launcherY = maxLauncherY;
+					if (hitPos.y > maxlauncherY) {
+						launcherY = maxlauncherY;
 					}
 				}
 			}
 			if(Input.GetKey(KeyCode.V)){
-				if (hitPos.y > minLauncherY) {
+				if (hitPos.y > minlauncherY) {
 					launcherY -= hitPosMod;
-					if (hitPos.y < minLauncherY) {
-						launcherY = minLauncherY;
+					if (hitPos.y < minlauncherY) {
+						launcherY = minlauncherY;
 					}
 				}
 			}
@@ -112,14 +117,14 @@ public class Cube : MonoBehaviour {
 			//launch 
 			if (Input.GetMouseButtonDown(0)) {
 				isKinematic = false;
-				this.gameObject.GetComponent<Rigidbody> ().AddForceAtPosition (-velocity * velocityMulti,hitPos);
 				GameObject.Destroy (tempHitMarker);
-				playState = PlayState.Launch;
+				GameObject.Destroy(templauncher);
+				this.gameObject.GetComponent<Rigidbody> ().AddForceAtPosition (-velocity * velocityMulti,hitPos);
+				playState = PlayState.launch;
 			}
 			break;
-		case PlayState.Launch:
-			GameObject.Destroy(tempLauncher);
-
+		case PlayState.launch:
+			
 			if (this.gameObject.GetComponent<Rigidbody> ().velocity.magnitude <= 0.01) {
 				this.gameObject.GetComponent<Rigidbody> ().velocity = Vector3.zero;
 
@@ -128,7 +133,7 @@ public class Cube : MonoBehaviour {
 				//cubePos = this.gameObject.transform.position;
 				hitPos = this.gameObject.transform.position;
 				launcherY = this.gameObject.transform.position.y;
-				playState = PlayState.Idle;
+				playState = PlayState.idle;
 			}
 			break;
 		}
@@ -137,27 +142,36 @@ public class Cube : MonoBehaviour {
 
 
 	void OnMouseDown(){
-		if (playState == PlayState.Idle) {
+		if (playState == PlayState.idle) {
 			//TEMP
 			//this.gameObject.GetComponent<Rigidbody> ().velocity = new Vector3(30f,4f,30f);
 			hitPos = this.gameObject.transform.position;
 			launcherY = this.gameObject.transform.position.y;
 			maxHitPosY = hitPos.y + this.gameObject.GetComponent<Renderer> ().bounds.extents.y;
 			minHitPosY = hitPos.y - this.gameObject.GetComponent<Renderer> ().bounds.extents.y;
-			maxLauncherY = maxHitPosY + this.gameObject.GetComponent<Renderer> ().bounds.extents.y;
-			minLauncherY = minHitPosY - this.gameObject.GetComponent<Renderer> ().bounds.extents.y;
+			maxlauncherY = maxHitPosY + this.gameObject.GetComponent<Renderer> ().bounds.extents.y;
+			minlauncherY = minHitPosY - this.gameObject.GetComponent<Renderer> ().bounds.extents.y;
 
 			//TESTING
 			tempHitMarker = (GameObject)Instantiate(hitPosMarker,hitPos,Quaternion.identity);
 
 			isKinematic = true;
-			playState = PlayState.Aiming;
+			playState = PlayState.aiming;
 			//StateMachine.playState = playState;
 
 			//might remove this later
 		}
 	}
 
+
+	public PlayState cubePlayState{
+		get{ 
+			return playState;
+		}
+		set{
+			playState = value;
+		}
+	}
 
 	public bool isKinematic{
 		get{
@@ -167,12 +181,46 @@ public class Cube : MonoBehaviour {
 		}
 	}	
 
-	private void UpdateLaunchVelocity(){
+	private void UpdatelaunchVelocity(){
+		//set launch position
 		ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		if ( Physics.Raycast (ray,out hit,1000.0f)) {
 			launcherPos = new Vector3 (hit.point.x, launcherY, 
 				hit.point.z);
+			//make sure the launcher is outside the cube
+			/*
+			if(this.gameObject.GetComponent<Renderer>().bounds.Contains(launcherPos)){
+				
+				if (launcherPos.x > this.gameObject.transform.position.x - this.gameObject.GetComponent<Renderer> ().bounds.extents.x &&
+				    launcherPos.x < this.gameObject.transform.position.x) {
+						launcherPos.x = this.gameObject.transform.position.x - this.gameObject.GetComponent<Renderer> ().bounds.extents.x;
+				}
+				else if (launcherPos.x < this.gameObject.transform.position.x + this.gameObject.GetComponent<Renderer> ().bounds.extents.x &&
+					launcherPos.x > this.gameObject.transform.position.x) {
+						launcherPos.x = this.gameObject.transform.position.x + this.gameObject.GetComponent<Renderer> ().bounds.extents.x;
+				}
+
+				if (launcherPos.z > this.gameObject.transform.position.z - this.gameObject.GetComponent<Renderer> ().bounds.extents.z &&
+					launcherPos.z < this.gameObject.transform.position.z) {
+						launcherPos.z = this.gameObject.transform.position.z - this.gameObject.GetComponent<Renderer> ().bounds.extents.z;
+				}
+				else if (launcherPos.z < this.gameObject.transform.position.z + this.gameObject.GetComponent<Renderer> ().bounds.extents.z &&
+					launcherPos.z > this.gameObject.transform.position.z) {
+					launcherPos.z = this.gameObject.transform.position.z + this.gameObject.GetComponent<Renderer> ().bounds.extents.z;
+				}
+			}
+			*/
 		}
+		//
+		//set hit position
+		/*
+		ray = new Ray (new Vector3 (launcherPos.x, hitPos.y, launcherPos.z), 
+			new Vector3 (this.gameObject.transform.position.x, hitPos.y, this.gameObject.transform.position.z));
+		if (Physics.Raycast (ray, out hit, 10000.0f, LayerMask.GetMask("cube"))) {
+			hitPos = hit.point;
+		}
+		print (hitPos);
+*/
 		/*
 		mousePos2D = Input.mousePosition;
 		mousePos2D.z = Camera.main.transform.position.y;
@@ -180,19 +228,19 @@ public class Cube : MonoBehaviour {
 		//mousePos2D.z = 1f;
 		mousePos3D = Camera.main.ScreenToWorldPoint (mousePos2D);
 		*/
-		GameObject.Destroy (tempLauncher);
+		GameObject.Destroy (templauncher);
 		//mousePos3D.y = 0f;
-		tempLauncher = (GameObject)Instantiate (launcher, launcherPos, Quaternion.Euler (0, 0, 0));
+		templauncher = (GameObject)Instantiate (launcher, launcherPos, Quaternion.Euler (0, 0, 0));
 		//cubePos = Camera.main.ScreenToWorldPoint (this.gameObject.transform.position);
 		velocity = launcherPos - hitPos;
 		if (velocity.magnitude > maxMagnitude) {
 			velocity = launcherPos.normalized * maxMagnitude;
 			launcherPos = velocity + hitPos;
-			tempLauncher.transform.position = launcherPos;
+			templauncher.transform.position = launcherPos;
 		}
 		//do something about the y later
 		//velocity.y = 0f; 
-		//GameObject.Destroy (tempLauncher);
+		//GameObject.Destroy (templauncher);
 		//print ("" + mousePos3D + ", " + velocity);
 		//since the camera has been rotated, we need to change the vector values
 		/*float z = velocity.z;

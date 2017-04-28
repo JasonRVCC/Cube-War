@@ -126,7 +126,7 @@ MonoBehaviour:
   launcher: {fileID: 150774, guid: 314ca14d051f212408974d556cb3aa13, type: 2}
   hitPosMarker: {fileID: 1261155044903242, guid: f026e7145b157514db6e0dfd551ebc24,
     type: 2}
-  velocityMulti: 100
+  velocityMulti: 150
   hitPosMod: 0.02
   maxMagnitude: 5
 --- !u!114 &114110244544113526
@@ -146,4 +146,5 @@ MonoBehaviour:
   def: 0
   owningPlayer: 0
   pointCost: 0
-  unitTexture: {fileID: 0}
+  unitTexture:
+  - {fileID: 0}

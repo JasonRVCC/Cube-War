@@ -19,6 +19,7 @@ public class Movement : MonoBehaviour {
     public float startTime;
     public float t;
     public float smoothTime = 1;
+    public CameraZoom foc;
 
 
 	void Update ()
@@ -40,7 +41,7 @@ public class Movement : MonoBehaviour {
         mov.y += Input.GetAxis("YMove");
         endPos.z += Input.GetAxis("ZMove");
         mov.z += Input.GetAxis("ZMove");
-        transform.localPosition +=  transform.rotation * mov * Time.deltaTime * speed;
+        transform.localPosition += transform.rotation * mov * Time.deltaTime * speed * (1 + foc.getZoom() / 20);
 	}
 
 

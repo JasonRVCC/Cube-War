@@ -33,6 +33,8 @@ public class StateMachine : MonoBehaviour {
 	public static bool cubePlace = false;
     public static bool p1Setup = false;
     public static bool p2Setup = false;
+    public static bool p1King = false;
+    public static bool p2King = false;
 
 
 
@@ -43,7 +45,7 @@ public class StateMachine : MonoBehaviour {
         if (state == GameState.active)
         {
             turnState = Turn.player1;
-
+            GameDriver.updateTurnInterface();
         }
     }
 
@@ -174,6 +176,16 @@ public class StateMachine : MonoBehaviour {
     public static void endP2Setup()
     {
         p2Setup = false;
+    }
+
+    public static void p1KingPlaced()
+    {
+        p1King = true;
+    }
+
+    public static void p2KingPlaced()
+    {
+        p2King = true;
     }
 
     public static void endSetup()

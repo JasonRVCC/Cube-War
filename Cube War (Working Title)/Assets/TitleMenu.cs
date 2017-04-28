@@ -12,6 +12,6 @@ public class TitleMenu : MonoBehaviour {
 	}
 	
 	public void StartGame(){
-		SceneManager.LoadScene ("InterfaceSetup", LoadSceneMode.Single);
+		SceneManager.LoadScene ("Playable", LoadSceneMode.Single);
 	}
 }

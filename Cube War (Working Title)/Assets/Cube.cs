@@ -65,6 +65,7 @@ public class Cube : MonoBehaviour {
 		//mousePos3D = Vector3.zero;
 		//maxMagnitude = this.gameObject.GetComponent<Collider> ().bounds.size.x * 3f;
 		velocity = Vector3.zero; //The player only controls X and Z velocity
+		unit.startDefense ();
 		//cubeBody = this.gameObject.GetComponent<Rigidbody>();
 		//StateMachine.battlePhase(); //For turning batttle on/off
 	}
@@ -138,7 +139,9 @@ public class Cube : MonoBehaviour {
 			if (Input.GetMouseButtonDown(0)) {
 				isKinematic = false;
 				flick = true;
-				this.gameObject.GetComponent<Rigidbody> ().AddForceAtPosition (-velocity * velocityMulti,hitPos);
+				unit.startAttack ();
+				this.gameObject.GetComponent<Rigidbody> ().AddForceAtPosition (-velocity * 
+					this.gameObject.GetComponent<Rigidbody>().mass * velocityMulti,hitPos);
 				//DestroyLaunchingObjects ();
 				LaunchLine.launchLine.Enabled(false);
 				playState = PlayState.launch;
@@ -153,6 +156,7 @@ public class Cube : MonoBehaviour {
 				//cubePos = this.gameObject.transform.position;
 				hitPos = this.gameObject.transform.position;
 				launcherY = this.gameObject.transform.position.y;
+				unit.startDefense ();
 				playState = PlayState.idle;
 				GameDriver.checkCubeMovement();
 			}
@@ -287,7 +291,7 @@ public class Cube : MonoBehaviour {
 
 	private void UpdatePlacingPosition(){
 		ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-		if ( Physics.Raycast (ray,out hit,1000.0f)) {
+		if ( Physics.Raycast (ray,out hit,1000.0f, (LayerMask)4096)) { //Only casts the ray against the RaycastGround layer.
 			cubePos = new Vector3 (hit.point.x, cubePos.y, 
 				hit.point.z);
 		}

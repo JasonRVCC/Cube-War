@@ -27,7 +27,6 @@ public class SetupInterface : MonoBehaviour {
 			print (classInfo.cost);
             if (!StateMachine.isPlacingCube && driver.getPlayerPointsRemaining() > classInfo.cost)
             {
-				print ("GOING");
 				newUnit = Instantiate(cubePrefab, new Vector3(0,2,0), Quaternion.identity) as GameObject;
 				newUnit.GetComponent<Cube> ().SetToPlacing();
 				newUnit.GetComponent<UnitClass>().unitSetup(classInfo.Lookup(targetClass, newUnit.GetComponent<UnitClass>()));
@@ -43,8 +42,15 @@ public class SetupInterface : MonoBehaviour {
             classInfo.Lookup(target);
             if (!StateMachine.isPlacingCube && driver.getPlayerPointsRemaining() >= classInfo.cost)
             {
+                if (target == "King")
+                {
+                    if ((StateMachine.currentTurn() == 1 && StateMachine.p1King == true) || (StateMachine.currentTurn() == 2 && StateMachine.p2King == true))
+                    {
+                        return;
+                    }
+                }
                 newUnit = Instantiate(cubePrefab) as GameObject;
-                newUnit.GetComponent<Cube>().playState = PlayState.placing;
+                newUnit.GetComponent<Cube>().SetToPlacing();
                 newUnit.GetComponent<UnitClass>().unitSetup(classInfo.Lookup(target, newUnit.GetComponent<UnitClass>()));
                 driver.placingCube(newUnit);
             }
@@ -57,12 +63,12 @@ public class SetupInterface : MonoBehaviour {
         {
             if (StateMachine.isPlacingCube == false)
             {
-                if (StateMachine.currentTurn() == 1)
+                if (StateMachine.currentTurn() == 1 && StateMachine.p1King == true)
                 {
                     StateMachine.endP1Setup();
                     StateMachine.passTurn();
                 }
-                else if (StateMachine.currentTurn() == 2)
+                else if (StateMachine.currentTurn() == 2 && StateMachine.p2King == true)
                 {
                     StateMachine.endP2Setup();
                     StateMachine.passTurn();
@@ -74,7 +80,7 @@ public class SetupInterface : MonoBehaviour {
 
     public void textureButtons(int i)
     {
-        foreach(Transform t in transform)
+        foreach (Transform t in transform)
         {
             switch (t.name)
             {
@@ -105,8 +111,14 @@ public class SetupInterface : MonoBehaviour {
                 case "Titan":
                     classInfo.Lookup("Titan");
                     break;
+                default:
+                    classInfo.Lookup("blank");
+                    break;
             }
-            TextureManager.applySprite(t.gameObject, classInfo.texture[i-1]);
+            if (classInfo.cName != className.Null)
+            {
+                TextureManager.applySprite(t.gameObject, classInfo.texture[i - 1]);
+            }
         }
     }
 }

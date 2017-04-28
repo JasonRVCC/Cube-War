@@ -5,20 +5,10 @@ using UnityEngine;
 public class DicePhysics : MonoBehaviour {
     public Vector3 incomingForce;
     public bool activeDie;
-    public bool push = true;
-
-
-    private void FixedUpdate()
-    {
-        if(activeDie && push)
-        {
-            GetComponent<Rigidbody>().AddForce(10, 0, 0);
-        }
-    }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!activeDie && collision.gameObject.CompareTag("Player"))
+        if (!activeDie && collision.gameObject.CompareTag("Cube"))
         {
 
 
@@ -35,11 +25,8 @@ public class DicePhysics : MonoBehaviour {
 
             //print(name + " - Hit, adding force of: " + incomingForce * GetComponent<Rigidbody>().mass + " from: " + GetComponent<Rigidbody>().mass);
         }
-        else if (activeDie && collision.gameObject.CompareTag("Player"))
+        else if (activeDie && collision.gameObject.CompareTag("Cube"))
         {
-            push = false;
-
-
             float incDown = collision.gameObject.GetComponent<Rigidbody>().velocity.y;
             incomingForce = collision.impulse;
             incomingForce.x += -GetComponent<Rigidbody>().velocity.x;
@@ -52,10 +39,5 @@ public class DicePhysics : MonoBehaviour {
             print(GetComponent<Rigidbody>().mass);
             print(name + " - Hit, adding force of: " + incomingForce * Mathf.Pow(2, GetComponent<Rigidbody>().mass) * 100);
         }
-    }
-
-        public bool retPush()
-    {
-        return push;
     }
 }

@@ -8,6 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MainMenu.unity
     guid: e562bcc23a90ace4ab611662e138e6d6
-  - enabled: 1
+  - enabled: 0
     path: Assets/InterfaceSetup.unity
     guid: 49fa6cbfe48da1f4d9cb4033ac72a588
+  - enabled: 1
+    path: Assets/Playable.unity
+    guid: ea156b2d26a1ed74cbba9b395123e34f

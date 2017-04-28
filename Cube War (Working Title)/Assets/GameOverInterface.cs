@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameOverInterface : MonoBehaviour {
 
-	public void gameOver(int winner)
-    {
-        GetComponent<Text>().text = "Player " + winner + " wins!";
-    }
+	public void reset(){
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
+	}
 }

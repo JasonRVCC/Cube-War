@@ -25,4 +25,14 @@ public class TextureManager : MonoBehaviour {
         else
             print("Can't apply sprite, the texture you passed in is null!");
     }
+
+    public static void applySprite(GameObject obj, Sprite tex)
+    {
+        if (tex != null)
+        {
+            obj.GetComponent<Image>().sprite = tex;
+        }
+        else
+            print("Can't apply sprite, the texture you passed in is null!");
+    }
 }

@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class TurnInterface : MonoBehaviour {
-    public Text turnText;
+    public Image turnImage;
+    public Sprite p1Sprite;
+    public Sprite p2Sprite;
 
-    public void Start()
+    public void Awake()
     {
-        turnText = GetComponent<Text>();
+        turnImage = GetComponent<Image>();
     }
 
     public void updateTurnInterface()
@@ -18,11 +20,12 @@ public class TurnInterface : MonoBehaviour {
             
             if (StateMachine.currentTurn() == 1)
             {
-                turnText.text = "Player 1";
+                TextureManager.applySprite(this.gameObject, p1Sprite);
+
             }
             else if (StateMachine.currentTurn() == 2)
             {
-                turnText.text = "Player 2";
+                TextureManager.applySprite(this.gameObject, p2Sprite);
             }
         }
     }
